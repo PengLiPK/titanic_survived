@@ -38,3 +38,9 @@ sns.barplot(x="Embarked", y="Survived", data=embark_mean, \
 plt.show()
 
 # Fare
+print(train_df["Fare"].max())
+facet = sns.FacetGrid(train_df, hue="Survived", aspect=4)
+facet.map(sns.kdeplot,"Fare",shade=True)
+facet.set(xlim=(0,train_df["Fare"].max()))
+facet.add_legend()
+plt.show()
