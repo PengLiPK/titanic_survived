@@ -30,3 +30,12 @@ test_df = pd.read_csv("./test.csv", dtype={"Age":np.float64},)
 train_df = train_df.drop(['PassengerId','Name','Ticket','Cabin'],axis=1)
 test_df = test_df.drop(['PassengerId','Name','Ticket','Cabin'],axis=1)
 
+# Replace "Sex" and "Embarked" with numbers
+train_df["Embarked"] = train_df["Embarked"].fillna("S")
+train_df["Gender"] = train_df["Sex"].map({'female':0, 'male':1}).astype(int)
+test_df["Gender"] = test_df["Sex"].map({'female':0, 'male':1}).astype(int)
+train_df["Embarked_num"] = train_df["Embarked"].\
+		map({'S':0,'C':1,'Q':2}).astype(int)
+test_df["Embarked_num"] = test_df["Embarked"].\
+		map({'S':0,'C':1,'Q':2}).astype(int)
+
