@@ -84,6 +84,7 @@ forest = RandomForestClassifier(n_estimators=100)
 forest.fit(xtrain,ytrain)
 output = forest.predict(testdata).astype(int)
 print(forest.score(xtrain,ytrain))
+print(output)
 
 # Output to a file
 pred_f = open('newmodel.csv','w+')

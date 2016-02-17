@@ -37,10 +37,16 @@ sns.barplot(x="Embarked", y="Survived", data=embark_mean, \
 
 plt.show()
 
+# Sex
+sns.countplot(x="Survived", hue="Sex", data = train_df, order = [1,0])
+plt.savefig('gender.png',format='png')
+plt.show()
+
 # Fare
 print(train_df["Fare"].max())
 facet = sns.FacetGrid(train_df, hue="Survived", aspect=4)
 facet.map(sns.kdeplot,"Fare",shade=True)
-facet.set(xlim=(0,train_df["Fare"].max()))
+facet.set(xlim=(0,80))
 facet.add_legend()
+plt.savefig('pot.png',format='png')
 plt.show()
