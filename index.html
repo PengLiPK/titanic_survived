@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Titanic survivals by PengLiPK</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Titanic survivals</h1>
+        <h2>A machine learning project to predict survivals in Titanic sinking tragedy</h2>
+        <a href="https://github.com/PengLiPK/titanic_survived" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3>
+<a id="titanic-survivals" class="anchor" href="#titanic-survivals" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Titanic survivals</h3>
+
+<p>Titanic survivals is a project of predicting survivals of Titanic sinking tragedy. The details of the project is on <a href="https://www.kaggle.com/c/titanic">kaggle</a>. There are training and testing data set for this project. The data are available on <a href="https://www.kaggle.com/c/titanic">kaggle</a>. The problem of this project is a classification problem. With the information of passengers and whether they survived in training data set, the survival model is built. Then the model is applied to the passengers in testing data set to predict whether they survived or not.</p>
+
+<h4>
+<a id="data-set" class="anchor" href="#data-set" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Data set</h4>
+
+<p>The training and testing data set are availble on <a href="https://www.kaggle.com/c/titanic">kaggle</a>. Data set is read by [Pandas] as following:   </p>
+
+<div class="highlight highlight-source-python"><pre><span class="pl-k">import</span> pandas <span class="pl-k">as</span> pd
+train_df <span class="pl-k">=</span> pd.read_csv(<span class="pl-s"><span class="pl-pds">"</span>./train.csv<span class="pl-pds">"</span></span>)</pre></div>
+
+<h4>
+<a id="relation-between-information-and-survival" class="anchor" href="#relation-between-information-and-survival" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Relation between information and survival</h4>
+
+<p>Before building model, it is needed to determine what information is related to survival. For example, does gender/price of ticket affect survival? Then unrelated information can be removed. More complex methods can be used to determine the relation.</p>
+
+<p>This image shows the relation between gender and survival:<br>
+<img src="./images/gender.png" alt="gender"></p>
+
+<p>This images shows the effect of the price of ticket:<br>
+<img src="./images/pot.png" alt="gender"></p>
+
+<h4>
+<a id="data-cleansing" class="anchor" href="#data-cleansing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Data cleansing</h4>
+
+<p>Data cleansing prepare the data for machine learning. This process includes filling N/A, dropping useless columns and representing the string column with numbers. If the data are in Pandas data frame, it is easy to use Pandas do all of these.</p>
+
+<ul>
+<li>Filling N/A data</li>
+</ul>
+
+<div class="highlight highlight-source-python"><pre>train_df[<span class="pl-s"><span class="pl-pds">"</span>Embarked<span class="pl-pds">"</span></span>] <span class="pl-k">=</span> train_df[<span class="pl-s"><span class="pl-pds">"</span>Embarked<span class="pl-pds">"</span></span>].fillna(<span class="pl-s"><span class="pl-pds">"</span>S<span class="pl-pds">"</span></span>)</pre></div>
+
+<ul>
+<li>Dropping columns</li>
+</ul>
+
+<div class="highlight highlight-source-python"><pre>train_df <span class="pl-k">=</span> train_df.drop([<span class="pl-s"><span class="pl-pds">'</span>PassengerId<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>Name<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>Ticket<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>Cabin<span class="pl-pds">'</span></span>],<span class="pl-v">axis</span><span class="pl-k">=</span><span class="pl-c1">1</span>)</pre></div>
+
+<ul>
+<li>Representing the string column with numbers</li>
+</ul>
+
+<div class="highlight highlight-source-python"><pre>train_df[<span class="pl-s"><span class="pl-pds">"</span>Sex<span class="pl-pds">"</span></span>] <span class="pl-k">=</span> train_df[<span class="pl-s"><span class="pl-pds">"</span>Sex<span class="pl-pds">"</span></span>].map({<span class="pl-s"><span class="pl-pds">'</span>female<span class="pl-pds">'</span></span>:<span class="pl-c1">0</span>, <span class="pl-s"><span class="pl-pds">'</span>male<span class="pl-pds">'</span></span>:<span class="pl-c1">1</span>}).astype(<span class="pl-c1">int</span>)</pre></div>
+
+<h4>
+<a id="building-machine-leaning-model-and-predicting" class="anchor" href="#building-machine-leaning-model-and-predicting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Building machine leaning model and predicting</h4>
+
+<p><a href="http://scikit-learn.org/stable/">Scikit-learning</a> is used to build machine learning model and predict the survivals. Using of Scikit-learning is very easy as the following:</p>
+
+<div class="highlight highlight-source-python"><pre><span class="pl-k">from</span> sklearn.ensemble <span class="pl-k">import</span> RandomForestClassifier
+forest <span class="pl-k">=</span> RandomForestClassifier(<span class="pl-v">n_estimators</span><span class="pl-k">=</span><span class="pl-c1">100</span>)
+forest.fit(xtrain,ytrain)
+output <span class="pl-k">=</span> forest.predict(testdata).astype(<span class="pl-c1">int</span>)</pre></div>
+
+<p>This is an example of using Random Forest Tree. <code>xtrain</code> and <code>ytrain</code> can be pandas data frame and are from training data set. <code>xtrain</code> contains the information of passengers, and <code>ytrain</code> only has one column of survival information.<br>
+<code>testdata</code> has the same format as <code>xtrain</code>, but from testing data set. <code>output</code> is a python list with survival information (survived = 1, not_survived = 0).</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/PengLiPK/titanic_survived/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/PengLiPK/titanic_survived/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/PengLiPK/titanic_survived"></a> is maintained by <a href="https://github.com/PengLiPK">PengLiPK</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-73791386-4");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
